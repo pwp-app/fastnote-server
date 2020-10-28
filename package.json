@@ -1,0 +1,56 @@
+{
+  "name": "fastnote-server",
+  "version": "1.0.0",
+  "description": "Backend server of Fastnote",
+  "private": true,
+  "egg": {
+    "declarations": true
+  },
+  "dependencies": {
+    "egg": "^2.29.1",
+    "egg-cors": "^2.2.3",
+    "egg-jwt": "^3.1.7",
+    "egg-mailer": "^1.1.0",
+    "egg-redis": "^2.4.0",
+    "egg-scripts": "^2.13.0",
+    "egg-security": "^2.8.0",
+    "egg-sequelize": "^6.0.0",
+    "egg-validate": "^2.0.2",
+    "mysql2": "^2.2.5"
+  },
+  "devDependencies": {
+    "autod": "^3.0.1",
+    "autod-egg": "^1.1.0",
+    "cross-env": "^7.0.2",
+    "egg-bin": "^4.15.0",
+    "egg-ci": "^1.18.0",
+    "egg-mock": "^4.0.1",
+    "eslint": "^7.12.0",
+    "eslint-config-egg": "^8.1.2",
+    "sequelize-cli": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=prod egg-scripts start --daemon --title=fastnote-server",
+    "stop": "egg-scripts stop --title=fastnote-server",
+    "dev": "cross-env NODE_ENV=dev egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "npm run lint -- --fix && npm run test-local",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "lint": "eslint .",
+    "ci": "npm run lint && npm run cov",
+    "autod": "autod"
+  },
+  "ci": {
+    "version": "10"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "BackRunner",
+  "license": "MIT"
+}

@@ -2,6 +2,7 @@
 
 'use strict';
 
+const path = require('path');
 const privateConfig = require('./config.private');
 
 module.exports = () => {
@@ -52,6 +53,10 @@ module.exports = () => {
 
   config.mailer = privateConfig.mailer;
 
+  config.mailTemplate = {
+    path: path.resolve(__dirname, '../resources/email'),
+  };
+
   config.jwt = {
     secret: privateConfig.jwt,
   };
@@ -66,6 +71,12 @@ module.exports = () => {
   config.cors = {
     origin: '*',
     allowMethods: 'GET,POST',
+  };
+
+  config.trekCaptcha = {
+    size: 4,
+    style: -1,
+    redis: true,
   };
 
   return {

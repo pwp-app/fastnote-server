@@ -3,8 +3,9 @@ const R = require('../utils/R');
 
 module.exports = config => {
   const jwt = async (ctx, next) => {
-    const token = ctx.request.header.authorization;
+    let token = ctx.request.header.authorization;
     if (token) {
+      token = token.replace('Bearer ', '');
       try {
         const decode = ctx.app.jwt.verify(token, config.secret);
         // check if refresh token

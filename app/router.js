@@ -12,6 +12,11 @@ const routes = {
       target: 'common.ping.ping',
       auth: true,
     },
+    '/captcha': {
+      method: 'get',
+      target: 'common.captcha.get',
+      auth: false,
+    },
   },
 };
 
@@ -27,13 +32,14 @@ const getTarget = (obj, str) => {
 
 const buildRouter = (app, routes, base = '') => {
   const { router, controller, middleware } = app;
+  const jwt = middleware.jwt(app.config.jwt);
   const keys = Object.keys(routes);
   for (const key of keys) {
     if (routes[key].target) {
       // has function
       const { method, target, auth } = routes[key];
       if (auth) {
-        router[method](base + key, middleware.jwt, getTarget(controller, target));
+        router[method](base + key, jwt, getTarget(controller, target));
       } else {
         router[method](base + key, getTarget(controller, target));
       }

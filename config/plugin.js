@@ -26,4 +26,12 @@ module.exports = {
     enable: true,
     package: 'egg-mailer',
   },
+  mailTemplate: {
+    enable: true,
+    package: 'egg-mail-template',
+  },
+  trekCaptcha: {
+    enable: true,
+    package: 'egg-trek-captcha',
+  },
 };

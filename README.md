@@ -1,33 +1,23 @@
 # fastnote-server
 
-Backend server of Fastnote
+Backend server of Fastnote.
 
-## QuickStart
+This project is under developing now...
 
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
+## Development
 
 ```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
+npm i
+npm run dev
 ```
 
-### Deploy
+## Deploy
 
 ```bash
-$ npm start
-$ npm stop
+npm start
+npm stop
 ```
 
-### npm scripts
+## License
 
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+MIT

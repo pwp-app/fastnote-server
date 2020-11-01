@@ -5,7 +5,6 @@ const routes = {
     '/ping': {
       method: 'get',
       target: 'common.ping.ping',
-      auth: false,
     },
     '/ping/auth': {
       method: 'get',
@@ -15,7 +14,20 @@ const routes = {
     '/captcha': {
       method: 'get',
       target: 'common.captcha.get',
-      auth: false,
+    },
+  },
+  '/user': {
+    '/login': {
+      method: 'post',
+      target: 'common.user.login',
+    },
+    '/register': {
+      method: 'post',
+      target: 'common.user.register',
+    },
+    '/sendMail': {
+      method: 'post',
+      target: 'common.user.sendMail',
     },
   },
 };

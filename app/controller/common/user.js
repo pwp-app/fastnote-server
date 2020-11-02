@@ -64,6 +64,7 @@ class UserController extends BaseController {
     const refreshToken = app.jwt.sign(payload, app.config.jwt.secret, {
       expiresIn: '14d',
     });
+    await app.model.User.signIn(username);
     return R.success(ctx, {
       authToken,
       refreshToken,

@@ -14,7 +14,7 @@ module.exports = config => {
         }
         // check if decoded token is right
         if (decode.uid && decode.username) {
-          ctx.state.auth = decode;
+          ctx.state.user = decode;
           await next();
         } else {
           return R.error(ctx, 'Wrong information in token.');

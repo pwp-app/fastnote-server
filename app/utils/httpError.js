@@ -39,9 +39,17 @@ const error = {
     code: 400010,
     message: '验证码不正确',
   },
+  updateDataFailed: {
+    code: 400011,
+    message: '数据更新失败',
+  },
   unknownError: {
     code: 500000,
     message: '未知错误',
+  },
+  requestParamError: {
+    code: 500001,
+    message: '请求参数有误',
   },
 };
 

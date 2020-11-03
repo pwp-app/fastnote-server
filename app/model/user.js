@@ -1,6 +1,7 @@
 'use strict';
 
 const { passwordEncrypt } = require('../utils/encrypt');
+const moment = require('moment');
 
 module.exports = app => {
   const { STRING, DATE } = app.Sequelize;
@@ -9,9 +10,10 @@ module.exports = app => {
     username: STRING(30),
     password: STRING(64),
     email: STRING,
-    created_at: DATE,
+    createdAt: DATE,
     updated_at: DATE,
-    last_sign_in_at: DATE,
+    lastSignInAt: DATE,
+    lastFetchToken: DATE,
   });
 
   User.prototype.has = async function(where) {
@@ -33,7 +35,37 @@ module.exports = app => {
     };
   };
 
-  User.prototype.signIn = async function() {
-    return await this.update({ last_sign_in_at: new Date() });
+  User.prototype.signIn = async function(username) {
+    const now = new Date();
+    return await this.update(
+      {
+        lastSignInAt: now,
+        lastFetchToken: now,
+      },
+      {
+        where: {
+          username,
+        },
+      }
+    );
+  };
+
+  User.prototype.checkRefresh = async function(userInfo) {
+    const { uid, username } = userInfo;
+    const stored = await this.findById(uid);
+    if (moment(stored.lastFetchToken).add(14, 'days').valueOf() > moment().valueOf()) {
+      return false;
+    }
+    return stored.username === username;
+  };
+
+  User.prototype.recordRefresh = async function(uid) {
+    return await this.update({
+      lastFetchToken: new Date(),
+    }, {
+      where: {
+        id: uid,
+      },
+    });
   };
 };

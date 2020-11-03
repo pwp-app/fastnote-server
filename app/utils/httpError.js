@@ -43,6 +43,10 @@ const error = {
     code: 400011,
     message: '数据更新失败',
   },
+  tokenInvalid: {
+    code: 400012,
+    message: 'token无效',
+  },
   unknownError: {
     code: 500000,
     message: '未知错误',

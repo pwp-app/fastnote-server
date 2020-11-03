@@ -23,6 +23,9 @@ const validateRules = {
     captchaId: { type: 'string', required: true },
     email: { type: 'email', required: true },
   },
+  refreshToken: {
+    token: { type: 'string', required: true },
+  },
 };
 
 class UserController extends BaseController {
@@ -61,7 +64,10 @@ class UserController extends BaseController {
     const authToken = app.jwt.sign(payload, app.config.jwt.secret, {
       expiresIn: '3h',
     });
-    const refreshToken = app.jwt.sign(payload, app.config.jwt.secret, {
+    const refreshToken = app.jwt.sign({
+      ...payload,
+      refresh: true,
+    }, app.config.jwt.secret, {
       expiresIn: '14d',
     });
     await app.model.User.signIn(username);
@@ -121,6 +127,44 @@ class UserController extends BaseController {
       return R.success(ctx);
     } catch (err) {
       return httpError(ctx, 'unknownError', err);
+    }
+  }
+  async refreshToken() {
+    const { ctx, app } = this;
+    ctx.validate(validateRules.refreshToken, ctx.query);
+    // decode token
+    const { token } = ctx.query;
+    try {
+      const decoded = ctx.app.jwt.verify(token, app.config.jwt.secret);
+      if (!decoded.refresh) {
+        return httpError('tokenInvalid');
+      }
+      // verify user info
+      const res = ctx.model.User.checkRefresh(decoded);
+      if (!res) {
+        return httpError('tokenInvalid');
+      }
+      // return signed token
+      const payload = {
+        username: decoded.username,
+        uid: decoded.uid,
+      };
+      const authToken = app.jwt.sign(payload, app.config.jwt.secret, {
+        expiresIn: '3h',
+      });
+      const refreshToken = app.jwt.sign({
+        ...payload,
+        refresh: true,
+      }, app.config.jwt.secret, {
+        expiresIn: '14d',
+      });
+      await ctx.model.User.recordRefresh(decoded.uid);
+      return R.success(ctx, {
+        authToken,
+        refreshToken,
+      });
+    } catch (err) {
+      return httpError('tokenInvalid');
     }
   }
 }

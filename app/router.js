@@ -29,6 +29,22 @@ const routes = {
       method: 'post',
       target: 'common.user.sendMail',
     },
+    '/refreshToken': {
+      method: 'get',
+      target: 'common.user.refreshToken',
+    },
+  },
+  '/sync': {
+    '/diff': {
+      method: 'get',
+      target: 'note.sync.diff',
+      auth: true,
+    },
+    '/update': {
+      method: 'post',
+      target: 'note.sync.update',
+      auth: true,
+    },
   },
 };
 
@@ -44,7 +60,7 @@ const getTarget = (obj, str) => {
 
 const buildRouter = (app, routes, base = '') => {
   const { router, controller, middleware } = app;
-  const jwt = middleware.jwt(app.config.jwt);
+  const jwt = middleware.auth(app.config.jwt);
   const keys = Object.keys(routes);
   for (const key of keys) {
     if (routes[key].target) {

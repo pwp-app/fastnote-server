@@ -52,7 +52,7 @@ class UserService extends Service {
   }
   async sendVerifyMail(email) {
     const { app } = this;
-    let template = app.mailTemplates.validation;
+    let template = app.mailTemplates.registerValidation;
     const code = genRandomCode();
     template = template.replace(/\$\{code\}/gi, code);
     // set redis

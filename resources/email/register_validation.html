@@ -1,0 +1,92 @@
+<div class="wrapper">
+  <div class="header"><img src="https://img.backrunner.top/fastnote/logo.png" /> <span>Fastnote</span></div>
+  <div class="desc">
+    <p>感谢您使用 Fastnote！</p>
+    <p>在启用云服务前，您需要使用下方的验证码完成注册流程。</p>
+  </div>
+  <div class="code">
+    <p>以下是您的验证码，验证码在<span class="expires">30</span>分钟内有效：</p>
+    <div class="number"><p>${code}</p></div>
+    <p>请尽快使用您的验证码，不要将您的验证码告知其他人。</p>
+  </div>
+  <div class="footer">
+    <div class="warn">
+      <p>如果这封邮件不是发送给您的，请忽略该邮件。</p>
+      <p>邮件为系统自动发送，请勿回复。</p>
+    </div>
+    <div class="sendby"><p>Send by pwp.app</p></div>
+  </div>
+</div>
+<style>
+  p {
+    margin: 0;
+    line-height: 32px;
+  }
+  .wrapper {
+    padding: 4px 16px;
+    user-select: none;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+  }
+  .header img {
+    width: 56px;
+    height: 56px;
+  }
+  .header span {
+    color: #1faeff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 12px;
+    letter-spacing: 0.075rem;
+  }
+  .desc {
+    color: #6e6e6e;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-top: 28px;
+  }
+  .code {
+    margin-top: 28px;
+    color: #6e6e6e;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .code .expires {
+    color: #1faeff;
+    font-weight: 700;
+    margin: 0 0.5em;
+  }
+  .code .number {
+    width: 320px;
+    height: 80px;
+    margin: 16px 0;
+    padding: 28px 48px;
+    font-size: 28px;
+    letter-spacing: 0.25em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    border: 1px solid #f8f8f8;
+    border-radius: 12px;
+  }
+  .code .number p {
+    user-select: text;
+  }
+  .footer {
+    margin-top: 24px;
+    width: 420px;
+    height: max-content;
+    border-top: 1px solid #dedede;
+    padding: 24px 0;
+  }
+  .footer p {
+    font-size: 13px;
+    color: #bebebe;
+    letter-spacing: 0.05em;
+  }
+</style>

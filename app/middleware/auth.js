@@ -1,12 +1,13 @@
 'use strict';
-const R = require('../utils/R');
+const R = require('../../utils/R');
 
 module.exports = config => {
-  const jwt = async (ctx, next) => {
+  const auth = async (ctx, next) => {
     let token = ctx.request.header.authorization;
     if (token) {
       token = token.replace('Bearer ', '');
       try {
+        console.log('token', token);
         const decode = ctx.app.jwt.verify(token, config.secret);
         // check if refresh token
         if (decode.refresh) {
@@ -26,5 +27,5 @@ module.exports = config => {
       return R.error(ctx, 'Cannot get auth token.');
     }
   };
-  return jwt;
+  return auth;
 };

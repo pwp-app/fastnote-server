@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  const { INTEGER, STRING, TEXT, DATE, Op } = app.Sequelize;
+  const { INTEGER, STRING, TEXT, BOOLEAN, DATE, Op } = app.Sequelize;
   const Note = app.model.define('note', {
     uid: INTEGER,
     noteId: INTEGER,
@@ -10,8 +10,18 @@ module.exports = app => {
       unique: true,
     },
     content: TEXT('long'),
+    deleted: {
+      type: BOOLEAN,
+      defaultValue: false,
+    },
     created_at: DATE,
     updated_at: DATE,
+  }, {
+    defaultScope: {
+      where: {
+        deleted: false,
+      },
+    },
   });
 
   Note.prototype.getUpdatedSince = async function(uid, time) {

@@ -49,7 +49,11 @@ class SyncController extends BaseController {
       return httpError(ctx, 'updateDataFailed');
     }
     // return syncId
-    console.log(updateRes);
+    const updated = [];
+    for (const item of updateRes) {
+      updated.push({ id: item.noteId, syncId: item.syncId });
+    }
+    return R.success(ctx, updated);
   }
 }
 

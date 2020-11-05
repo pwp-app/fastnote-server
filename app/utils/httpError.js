@@ -3,6 +3,10 @@
 const R = require('../../utils/R');
 
 const error = {
+  inputError: {
+    code: 100000,
+    message: '输入的内容有误',
+  },
   authFalied: {
     code: 400001,
     message: '用户名或密码错误',
@@ -15,13 +19,13 @@ const error = {
     code: 400003,
     message: '现在还不能发送，请稍后再试',
   },
-  codeNotExisted: {
+  mailCodeNotExisted: {
     code: 400004,
-    message: '验证码不存在，请检查您的输入',
+    message: '邮件验证码不存在，请检查您的输入',
   },
-  codeNotRight: {
+  mailCodeNotRight: {
     code: 400005,
-    message: '验证码不正确，请重试',
+    message: '邮件验证码不正确，请重试',
   },
   usernameExisted: {
     code: 400006,

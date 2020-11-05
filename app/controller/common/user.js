@@ -32,7 +32,11 @@ const validateRules = {
 class UserController extends BaseController {
   async login() {
     const { ctx, app, service } = this;
-    ctx.validate(validateRules.login);
+    try {
+      ctx.validate(validateRules.login);
+    } catch (err) {
+      return httpError(ctx, 'inputError');
+    }
     // check if user existed
     const { username } = ctx.request.body;
     if (!await service.user.checkUsername(username)) {
@@ -46,7 +50,7 @@ class UserController extends BaseController {
       }
       // verify captcha
       const ret = await app.captcha.verify(captchaId, captcha);
-      if (!ret || ret.success) {
+      if (!ret || !ret.success) {
         return httpError(ctx, 'captchaVerifyFailed');
       }
     }
@@ -54,7 +58,7 @@ class UserController extends BaseController {
     const { password } = ctx.request.body;
     const verifyRet = await ctx.model.User.verify(username, password);
     if (!verifyRet || !verifyRet.success) {
-      await service.user.countLoginFailed(username);
+      service.user.countLoginFailed(username);
       return httpError(ctx, 'userCredentialError');
     }
     // generate jwt
@@ -72,6 +76,7 @@ class UserController extends BaseController {
     }, app.config.jwt.secret, {
       expiresIn: '14d',
     });
+    service.user.clearLoginFailed(username);
     await ctx.model.User.signIn(username);
     return R.success(ctx, {
       authToken,
@@ -80,7 +85,11 @@ class UserController extends BaseController {
   }
   async register() {
     const { ctx, service } = this;
-    ctx.validate(validateRules.register);
+    try {
+      ctx.validate(validateRules.register);
+    } catch (err) {
+      return httpError(ctx, 'inputError');
+    }
     // verify input
     const { username, password, confirmPassword } = ctx.request.body;
     if (password !== confirmPassword) {
@@ -112,7 +121,11 @@ class UserController extends BaseController {
   }
   async sendMail() {
     const { ctx, app, service } = this;
-    ctx.validate(validateRules.sendMail);
+    try {
+      ctx.validate(validateRules.sendMail);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
     // verify captcha
     const { captcha, captchaId } = ctx.request.body;
     const captchaRet = await app.captcha.verify(captchaId, captcha);
@@ -133,7 +146,11 @@ class UserController extends BaseController {
   }
   async refreshToken() {
     const { ctx, app } = this;
-    ctx.validate(validateRules.refreshToken, ctx.query);
+    try {
+      ctx.validate(validateRules.refreshToken, ctx.query);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
     // decode token
     const { token } = ctx.query;
     try {

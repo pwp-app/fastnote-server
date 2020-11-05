@@ -46,6 +46,11 @@ class UserService extends Service {
     await app.redis.set(cacheKey, times, 'ex', sec('PT5M'));
     return times;
   }
+  async clearLoginFailed(username) {
+    const { app } = this;
+    const cacheKey = `login-failed-${username}`;
+    app.redis.del(cacheKey);
+  }
   async sendVerifyMail(email) {
     const { app } = this;
     let template = app.mailTemplates.registerValidation;
@@ -73,13 +78,13 @@ class UserService extends Service {
     if (!cachedCode) {
       return {
         success: false,
-        reason: 'codeNotExisted',
+        reason: 'mailCodeNotExisted',
       };
     }
     if (code !== cachedCode) {
       return {
         success: false,
-        reason: 'codeNotRight',
+        reason: 'mailCodeNotRight',
       };
     }
     await app.redis.del(key);

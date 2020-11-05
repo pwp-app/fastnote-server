@@ -16,7 +16,11 @@ const validateRules = {
 class SyncController extends BaseController {
   async diff() {
     const { ctx, app } = this;
-    ctx.validate(validateRules.diff, ctx.query);
+    try {
+      ctx.validate(validateRules.diff, ctx.query);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
     // get uid
     const { uid } = ctx.state.user;
     // fetch updated notes
@@ -31,7 +35,11 @@ class SyncController extends BaseController {
   }
   async update() {
     const { ctx, service } = this;
-    ctx.validate(validateRules.upload, ctx.query);
+    try {
+      ctx.validate(validateRules.upload, ctx.query);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
     // get uid
     const { uid } = ctx.state.user;
     // update notes in database

@@ -8,6 +8,8 @@ class CaptchaController extends BaseController {
     const { ctx, app } = this;
     try {
       const { uuid, captcha } = await app.captcha.gen();
+      // disable browser cache for captcha
+      ctx.append('Cache-Control', 'no-store');
       return R.success(ctx, {
         uuid,
         captcha,

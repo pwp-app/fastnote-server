@@ -16,7 +16,7 @@ const validateRules = {
     password: { type: 'password', required: true, min: 64, max: 64 },
     confirmPassword: { type: 'password', required: true, min: 64, max: 64 },
     email: { type: 'email', required: true },
-    emailCode: { type: 'string', required: true, max: 6, min: 6 },
+    emailCaptcha: { type: 'string', required: true, max: 6, min: 6 },
   },
   sendMail: {
     captcha: { type: 'string', required: true, max: 4, min: 4 },
@@ -88,8 +88,8 @@ class UserController extends BaseController {
       return httpError(ctx, 'usernameExisted');
     }
     // verify email
-    const { email, emailCode } = ctx.request.body;
-    const ret = await service.user.verifyMail(email, emailCode);
+    const { email, emailCaptcha } = ctx.request.body;
+    const ret = await service.user.verifyMail(email, emailCaptcha);
     if (!ret) {
       return httpError(ctx, 'unknownError');
     }

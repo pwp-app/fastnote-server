@@ -77,6 +77,7 @@ module.exports = () => {
     size: 4,
     style: -1,
     redis: true,
+    expires: 300,
   };
 
   return {

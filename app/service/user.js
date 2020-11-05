@@ -4,15 +4,11 @@ const Service = require('egg').Service;
 const { sec } = require('../../utils/time');
 const { genRandomCode } = require('../utils/utils');
 const { getMailOptions } = require('../utils/mail');
-const { passwordEncrypt } = require('../utils/encrypt');
 
 class UserService extends Service {
   async add(user) {
     const { ctx } = this;
-    await ctx.model.User.create({
-      ...user,
-      password: passwordEncrypt(user.password),
-    });
+    await ctx.model.User.create(user);
   }
   async checkUsername(username) {
     const { ctx, app } = this;

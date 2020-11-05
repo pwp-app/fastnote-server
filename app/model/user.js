@@ -16,14 +16,14 @@ module.exports = app => {
     lastFetchToken: DATE,
   });
 
-  User.prototype.has = async function(where) {
+  User.has = async function(where) {
     const count = await this.count({
       where,
     });
     return count > 0;
   };
 
-  User.prototype.verify = async function(username, password) {
+  User.verify = async function(username, password) {
     const user = await this.findOne({
       where: {
         username,
@@ -35,7 +35,7 @@ module.exports = app => {
     };
   };
 
-  User.prototype.signIn = async function(username) {
+  User.signIn = async function(username) {
     const now = new Date();
     return await this.update(
       {
@@ -50,7 +50,7 @@ module.exports = app => {
     );
   };
 
-  User.prototype.checkRefresh = async function(userInfo) {
+  User.checkRefresh = async function(userInfo) {
     const { uid, username } = userInfo;
     const stored = await this.findById(uid);
     if (moment(stored.lastFetchToken).add(14, 'days').valueOf() > moment().valueOf()) {
@@ -59,7 +59,7 @@ module.exports = app => {
     return stored.username === username;
   };
 
-  User.prototype.recordRefresh = async function(uid) {
+  User.recordRefresh = async function(uid) {
     return await this.update({
       lastFetchToken: new Date(),
     }, {
@@ -68,4 +68,6 @@ module.exports = app => {
       },
     });
   };
+
+  return User;
 };

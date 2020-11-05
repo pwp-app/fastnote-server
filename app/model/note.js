@@ -24,7 +24,7 @@ module.exports = app => {
     },
   });
 
-  Note.prototype.getUpdatedSince = async function(uid, time) {
+  Note.getUpdatedSince = async function(uid, time) {
     return this.findAll({
       where: {
         uid,
@@ -34,4 +34,6 @@ module.exports = app => {
       },
     });
   };
+
+  return Note;
 };

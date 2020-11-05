@@ -3,6 +3,9 @@
 module.exports = {
   success: (ctx, data) => {
     ctx.status = 200;
+    ctx.set({
+      'Content-Type': 'application/json',
+    });
     ctx.body = {
       code: 0,
       success: true,
@@ -11,6 +14,9 @@ module.exports = {
   },
   error: (ctx, message, err, code = -1) => {
     ctx.status = 200;
+    ctx.set({
+      'Content-Type': 'application/json',
+    });
     ctx.body = {
       code,
       success: false,

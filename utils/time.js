@@ -2,7 +2,7 @@
 
 const moment = require('moment');
 
-const sec = time => moment.duration(time).seconds();
+const sec = time => moment.duration(time).asSeconds();
 
 module.exports = {
   sec,

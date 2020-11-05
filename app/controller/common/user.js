@@ -3,6 +3,7 @@
 const BaseController = require('../base');
 const R = require('../../../utils/R');
 const { httpError } = require('../../utils/httpError');
+const { passwordEncrypt } = require('../../utils/encrypt');
 
 const validateRules = {
   login: {
@@ -34,7 +35,7 @@ class UserController extends BaseController {
     ctx.validate(validateRules.login);
     // check if user existed
     const { username } = ctx.request.body;
-    if (!service.user.checkUsername(username)) {
+    if (!await service.user.checkUsername(username)) {
       return httpError(ctx, 'userCredentialError');
     }
     // check if login need captcha
@@ -53,6 +54,7 @@ class UserController extends BaseController {
     const { password } = ctx.request.body;
     const verifyRet = await ctx.model.User.verify(username, password);
     if (!verifyRet || !verifyRet.success) {
+      await service.user.countLoginFailed(username);
       return httpError(ctx, 'userCredentialError');
     }
     // generate jwt
@@ -70,7 +72,7 @@ class UserController extends BaseController {
     }, app.config.jwt.secret, {
       expiresIn: '14d',
     });
-    await app.model.User.signIn(username);
+    await ctx.model.User.signIn(username);
     return R.success(ctx, {
       authToken,
       refreshToken,
@@ -84,7 +86,7 @@ class UserController extends BaseController {
     if (password !== confirmPassword) {
       return httpError(ctx, 'confirmNotRight');
     }
-    if (service.user.checkUsername(username)) {
+    if (await service.user.checkUsername(username)) {
       return httpError(ctx, 'usernameExisted');
     }
     // verify email
@@ -100,7 +102,7 @@ class UserController extends BaseController {
     try {
       await service.user.add({
         username,
-        password,
+        password: passwordEncrypt(password),
         email,
       });
       return R.success(ctx);
@@ -113,7 +115,7 @@ class UserController extends BaseController {
     ctx.validate(validateRules.sendMail);
     // verify captcha
     const { captcha, captchaId } = ctx.request.body;
-    const captchaRet = app.captcha.verify(captchaId, captcha);
+    const captchaRet = await app.captcha.verify(captchaId, captcha);
     if (!captchaRet || !captchaRet.success) {
       return httpError(ctx, 'captchaVerifyFailed');
     }

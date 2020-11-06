@@ -7,7 +7,6 @@ module.exports = config => {
     if (token) {
       token = token.replace('Bearer ', '');
       try {
-        console.log('token', token);
         const decode = ctx.app.jwt.verify(token, config.secret);
         // check if refresh token
         if (decode.refresh) {

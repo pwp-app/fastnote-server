@@ -52,7 +52,7 @@ module.exports = app => {
 
   User.checkRefresh = async function(userInfo) {
     const { uid, username } = userInfo;
-    const stored = await this.findById(uid);
+    const stored = await this.findByPk(uid);
     if (moment(stored.lastFetchToken).add(14, 'days').valueOf() > moment().valueOf()) {
       return false;
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 const R = require('../../../utils/R');
-const httpError = require('../../utils/httpError');
+const { httpError } = require('../../utils/httpError');
 const BaseController = require('../base');
 
 const validateRules = {
@@ -25,18 +25,22 @@ class SyncController extends BaseController {
     const { uid } = ctx.state.user;
     // fetch updated notes
     const { lastSync } = ctx.query;
-    const updatedNotes = await app.model.Note.getUpdatedSince(uid, lastSync);
-    if (updatedNotes) {
-      return R.success(ctx, {
-        notes: updatedNotes,
-      });
+    try {
+      const updatedNotes = await app.model.Note.getUpdatedSince(uid, lastSync);
+      if (updatedNotes) {
+        return R.success(ctx, {
+          notes: updatedNotes,
+        });
+      }
+    } catch (err) {
+      console.log('Get recent update notes error: ', err);
+      return httpError(ctx, 'unknownError');
     }
-    return httpError(ctx, 'unknownError');
   }
   async update() {
     const { ctx, service } = this;
     try {
-      ctx.validate(validateRules.upload, ctx.query);
+      ctx.validate(validateRules.upload);
     } catch (err) {
       return httpError(ctx, 'inputError', null, err.message);
     }

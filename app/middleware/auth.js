@@ -20,6 +20,7 @@ module.exports = config => {
           return R.error(ctx, 'Wrong information in token.');
         }
       } catch (err) {
+        console.error('Verify token error: ', err);
         return R.error(ctx, 'Cannot verify idendification.', err);
       }
     } else {

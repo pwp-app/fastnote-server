@@ -2,6 +2,7 @@
 
 const Service = require('egg').Service;
 const uuid = require('uuid');
+const { sha256 } = require('../utils/encrypt');
 
 class SyncService extends Service {
   async update(uid, notes) {
@@ -18,6 +19,28 @@ class SyncService extends Service {
       });
     }
     return await ctx.model.Note.bulkCreate(updateList);
+  }
+  async delete(uid, syncIds) {
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
+    await ctx.model.Note.destory({
+      where: {
+        uid,
+        syncId: {
+          [Op.in]: syncIds,
+        },
+      },
+    });
+    const logs = syncIds.map(item => {
+      return {
+        uid,
+        logId: sha256(`${uid}${item}`),
+        syncId: item,
+      };
+    });
+    return await ctx.model.DeleteLog.bulkCreate(logs, {
+      updateOnDuplicate: [],
+    });
   }
 }
 

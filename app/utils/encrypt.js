@@ -15,6 +15,11 @@ const passwordEncrypt = password => {
   return res;
 };
 
+const sha256 = str => {
+  return crypto.createHash('sha256').update(str).digest('hex');
+};
+
 module.exports = {
   passwordEncrypt,
+  sha256,
 };

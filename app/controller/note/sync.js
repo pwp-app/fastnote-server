@@ -10,12 +10,13 @@ const validateRules = {
   },
   upload: {
     notes: { required: true, type: 'string' },
+    deleted: { type: 'string' },
   },
 };
 
 class SyncController extends BaseController {
   async diff() {
-    const { ctx, app } = this;
+    const { ctx } = this;
     try {
       ctx.validate(validateRules.diff, ctx.query);
     } catch (err) {
@@ -26,10 +27,12 @@ class SyncController extends BaseController {
     // fetch updated notes
     const { lastSync } = ctx.query;
     try {
-      const updatedNotes = await app.model.Note.getUpdatedSince(uid, lastSync);
+      const updatedNotes = await ctx.model.Note.getUpdatedSince(uid, lastSync);
+      const deletedLogs = await ctx.model.DeleteLog.getCreatedSince(uid, lastSync);
       if (updatedNotes) {
         return R.success(ctx, {
           notes: updatedNotes,
+          deleted: deletedLogs,
         });
       }
     } catch (err) {
@@ -64,6 +67,26 @@ class SyncController extends BaseController {
     const updated = [];
     for (const item of updateRes) {
       updated.push({ id: item.noteId, syncId: item.syncId });
+    }
+    // do delete
+    let deleted;
+    if (ctx.request.body.deleted) {
+      try {
+        deleted = JSON.parse(ctx.request.body.deleted);
+      } catch (err) {
+        return httpError(ctx, 'requestParamError');
+      }
+      if (deleted && Array.isArray(deleted) && deleted.length > 0) {
+        try {
+          const deleteRes = await service.sync.delete(uid, deleted);
+          if (!deleteRes) {
+            return httpError(ctx, 'updateDataFailed');
+          }
+        } catch (err) {
+          console.error('Delete notes error: ', err);
+          return httpError(ctx, 'updateDataFailed');
+        }
+      }
     }
     return R.success(ctx, updated);
   }

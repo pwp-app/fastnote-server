@@ -1,29 +1,28 @@
 'use strict';
 
 module.exports = app => {
-  const { INTEGER, STRING, TEXT, DATE, Op } = app.Sequelize;
-  const Note = app.model.define('note', {
+  const { INTEGER, STRING, DATE, Op } = app.Sequelize;
+  const DeleteLog = app.model.define('delete_log', {
     uid: INTEGER,
-    noteId: INTEGER,
-    syncId: {
+    logId: {
       type: STRING,
       unique: true,
     },
-    content: TEXT('long'),
+    syncId: STRING,
     createdAt: DATE,
     updatedAt: DATE,
   });
 
-  Note.getUpdatedSince = async function(uid, time) {
+  DeleteLog.getCreatedSince = async function(uid, time) {
     return this.findAll({
       where: {
         uid,
-        updatedAt: {
+        createdAt: {
           [Op.gt]: time,
         },
       },
     });
   };
 
-  return Note;
+  return DeleteLog;
 };

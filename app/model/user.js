@@ -11,7 +11,7 @@ module.exports = app => {
     password: STRING(64),
     email: STRING,
     createdAt: DATE,
-    updated_at: DATE,
+    updatedAt: DATE,
     lastSignInAt: DATE,
     lastFetchToken: DATE,
   });

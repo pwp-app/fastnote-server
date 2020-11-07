@@ -10,7 +10,7 @@ const validateRules = {
   },
   upload: {
     notes: { required: true, type: 'string' },
-    deleted: { type: 'string' },
+    deleted: { required: false, type: 'string' },
   },
 };
 

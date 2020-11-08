@@ -8,9 +8,12 @@ const validateRules = {
   diff: {
     lastSync: { required: true, type: 'dateTime' },
   },
-  upload: {
+  update: {
     notes: { required: true, type: 'string' },
     deleted: { required: false, type: 'string' },
+  },
+  pushCategories: {
+    categories: { required: true, type: 'string' },
   },
 };
 
@@ -43,7 +46,7 @@ class SyncController extends BaseController {
   async update() {
     const { ctx, service } = this;
     try {
-      ctx.validate(validateRules.upload);
+      ctx.validate(validateRules.update);
     } catch (err) {
       return httpError(ctx, 'inputError', null, err.message);
     }
@@ -89,6 +92,27 @@ class SyncController extends BaseController {
       }
     }
     return R.success(ctx, updated);
+  }
+  async pushCategories() {
+    const { ctx } = this;
+    try {
+      ctx.validate(validateRules.pushCategories);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
+    try {
+      const res = await ctx.model.Category.create({
+        uid: ctx.state.user.uid,
+        content: ctx.request.body.categories,
+      });
+      if (!res) {
+        return httpError(ctx, 'unknownError');
+      }
+      return R.success(ctx);
+    } catch (err) {
+      console.error('Create category error: ', err);
+      return httpError(ctx, 'unknownError');
+    }
   }
 }
 

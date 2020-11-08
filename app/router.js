@@ -45,6 +45,28 @@ const routes = {
       target: 'note.sync.update',
       auth: true,
     },
+    '/pushCategories': {
+      method: 'post',
+      target: 'note.sync.pushCategories',
+      auth: true,
+    },
+  },
+  '/note': {
+    '/list': {
+      method: 'get',
+      target: 'note.base.getList',
+      auth: true,
+    },
+    '/save': {
+      method: 'post',
+      target: 'note.base.save',
+      auth: true,
+    },
+    '/delete': {
+      method: 'post',
+      target: 'note.base.delete',
+      auth: true,
+    },
   },
 };
 

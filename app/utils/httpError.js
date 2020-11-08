@@ -51,6 +51,14 @@ const error = {
     code: 400012,
     message: 'token无效',
   },
+  deleteFailed: {
+    code: 400013,
+    message: '数据删除失败',
+  },
+  saveFailed: {
+    code: 400014,
+    message: '数据保存失败',
+  },
   unknownError: {
     code: 500000,
     message: '未知错误',

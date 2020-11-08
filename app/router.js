@@ -45,11 +45,6 @@ const routes = {
       target: 'note.sync.update',
       auth: true,
     },
-    '/pushCategories': {
-      method: 'post',
-      target: 'note.sync.pushCategories',
-      auth: true,
-    },
   },
   '/note': {
     '/list': {
@@ -65,6 +60,18 @@ const routes = {
     '/delete': {
       method: 'post',
       target: 'note.base.delete',
+      auth: true,
+    },
+  },
+  '/category': {
+    '/get': {
+      method: 'get',
+      target: 'category.base.get',
+      auth: true,
+    },
+    '/update': {
+      method: 'post',
+      target: 'category.base.update',
       auth: true,
     },
   },

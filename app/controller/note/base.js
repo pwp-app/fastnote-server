@@ -30,7 +30,7 @@ class NoteController extends BaseController {
     // get notes by uid
     const { page, pageSize } = ctx.query;
     try {
-      const res = await ctx.model.Note.findAndCountAll({
+      const res = await ctx.model.Note.findAll({
         where: {
           uid: ctx.state.user.uid,
         },
@@ -41,7 +41,7 @@ class NoteController extends BaseController {
       return R.success(ctx, res);
     } catch (err) {
       console.error('Get notes error: ', err);
-      return httpError(ctx, 'unknownError');
+      return httpError(ctx, 'unknownError', err);
     }
   }
   async save() {
@@ -69,7 +69,7 @@ class NoteController extends BaseController {
       });
     } catch (err) {
       console.error('Save not error: ', err);
-      return httpError(ctx, 'unknownError');
+      return httpError(ctx, 'unknownError', err);
     }
   }
   async delete() {
@@ -93,7 +93,7 @@ class NoteController extends BaseController {
       return R.success(ctx);
     } catch (err) {
       console.error('Delete note error: ', err);
-      return httpError(ctx, 'unknownError');
+      return httpError(ctx, 'unknownError', err);
     }
   }
 }

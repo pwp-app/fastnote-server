@@ -12,9 +12,6 @@ const validateRules = {
     notes: { required: true, type: 'string' },
     deleted: { required: false, type: 'string' },
   },
-  pushCategories: {
-    categories: { required: true, type: 'string' },
-  },
 };
 
 class SyncController extends BaseController {
@@ -40,7 +37,7 @@ class SyncController extends BaseController {
       }
     } catch (err) {
       console.log('Get recent update notes error: ', err);
-      return httpError(ctx, 'unknownError');
+      return httpError(ctx, 'unknownError', err);
     }
   }
   async update() {
@@ -92,27 +89,6 @@ class SyncController extends BaseController {
       }
     }
     return R.success(ctx, updated);
-  }
-  async pushCategories() {
-    const { ctx } = this;
-    try {
-      ctx.validate(validateRules.pushCategories);
-    } catch (err) {
-      return httpError(ctx, 'inputError', null, err.message);
-    }
-    try {
-      const res = await ctx.model.Category.create({
-        uid: ctx.state.user.uid,
-        content: ctx.request.body.categories,
-      });
-      if (!res) {
-        return httpError(ctx, 'unknownError');
-      }
-      return R.success(ctx);
-    } catch (err) {
-      console.error('Create category error: ', err);
-      return httpError(ctx, 'unknownError');
-    }
   }
 }
 

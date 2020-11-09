@@ -34,7 +34,7 @@ class SyncController extends BaseController {
         return R.success(ctx, {
           notes: updatedNotes,
           deleted: deletedLogs,
-          categories,
+          categories: categories.content,
         });
       }
     } catch (err) {

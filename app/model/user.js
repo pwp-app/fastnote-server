@@ -72,5 +72,14 @@ module.exports = app => {
     });
   };
 
+  User.getInfo = async function(uid) {
+    return await this.findOne({
+      attributes: [ 'id', 'username', 'email' ],
+      where: {
+        id: uid,
+      },
+    });
+  };
+
   return User;
 };

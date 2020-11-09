@@ -186,6 +186,19 @@ class UserController extends BaseController {
       return httpError('tokenInvalid');
     }
   }
+  async getInfo() {
+    const { ctx } = this;
+    try {
+      const res = await ctx.model.User.getInfo(ctx.state.user.uid);
+      if (!res) {
+        return httpError(ctx, 'unknownError');
+      }
+      return R.success(ctx, res);
+    } catch (err) {
+      console.error('Get user info error: ', err);
+      return httpError(ctx, 'unknownError', err);
+    }
+  }
 }
 
 module.exports = UserController;

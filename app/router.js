@@ -33,6 +33,10 @@ const routes = {
       method: 'get',
       target: 'common.user.refreshToken',
     },
+    '/getInfo': {
+      method: 'get',
+      target: 'common.user.getInfo',
+    },
   },
   '/sync': {
     '/diff': {

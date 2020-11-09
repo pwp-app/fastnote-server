@@ -3,6 +3,7 @@
 const R = require('../../../utils/R');
 const { httpError } = require('../../utils/httpError');
 const BaseController = require('../base');
+const uuid = require('uuid');
 
 const validateRules = {
   getList: {
@@ -15,8 +16,8 @@ const validateRules = {
     category: { required: true, type: 'string' },
   },
   save: {
-    noteId: { required: true },
-    syncId: { required: true, type: 'string' },
+    noteId: { required: true, type: 'int' },
+    syncId: { required: false, type: 'string' },
     category: { required: false, type: 'string' },
     content: { required: true, type: 'string' },
   },
@@ -94,6 +95,7 @@ class NoteController extends BaseController {
   async save() {
     const { ctx } = this;
     try {
+      ctx.request.body.noteId = toInt(ctx.request.body.noteId);
       ctx.validate(validateRules.save);
     } catch (err) {
       return httpError(ctx, 'inputError', null, err.message);
@@ -101,13 +103,11 @@ class NoteController extends BaseController {
     const { noteId, syncId, category, content } = ctx.request.body;
     try {
       const res = await ctx.model.Note.upsert({
-        where: {
-          uid: ctx.state.user.uid,
-          noteId,
-          syncId,
-          category: category || null,
-          content,
-        },
+        uid: ctx.state.user.uid,
+        noteId,
+        syncId: syncId || uuid.v4(),
+        category: category || null,
+        content,
       });
       if (!res) {
         return httpError(ctx, 'saveFailed');

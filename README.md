@@ -20,4 +20,4 @@ npm stop
 
 ## License
 
-MIT
+GPLv3

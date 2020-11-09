@@ -52,6 +52,11 @@ const routes = {
       target: 'note.base.getList',
       auth: true,
     },
+    '/listByCat': {
+      method: 'get',
+      target: 'note.base.getListByCat',
+      auth: true,
+    },
     '/save': {
       method: 'post',
       target: 'note.base.save',

@@ -29,10 +29,12 @@ class SyncController extends BaseController {
     try {
       const updatedNotes = await ctx.model.Note.getUpdatedSince(uid, lastSync);
       const deletedLogs = await ctx.model.DeleteLog.getCreatedSince(uid, lastSync);
+      const categories = await ctx.model.Category.getChange(uid, lastSync);
       if (updatedNotes) {
         return R.success(ctx, {
           notes: updatedNotes,
           deleted: deletedLogs,
+          categories,
         });
       }
     } catch (err) {

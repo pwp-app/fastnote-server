@@ -9,6 +9,10 @@ module.exports = app => {
       type: STRING,
       unique: true,
     },
+    category: {
+      type: STRING,
+      defaultValue: null,
+    },
     content: TEXT('long'),
     createdAt: DATE,
     updatedAt: DATE,

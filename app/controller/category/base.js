@@ -5,7 +5,7 @@ const { httpError } = require('../../utils/httpError');
 const BaseController = require('../base');
 
 const validateRules = {
-  udpate: {
+  update: {
     categories: { required: true, type: 'string' },
   },
 };
@@ -19,9 +19,6 @@ class CategoryController extends BaseController {
           uid: ctx.state.user.uid,
         },
       });
-      if (!res) {
-        return httpError(ctx, 'unknownError');
-      }
       return R.success(ctx, res);
     } catch (err) {
       console.error('Get category error: ', err);
@@ -36,7 +33,7 @@ class CategoryController extends BaseController {
       return httpError(ctx, 'inputError', null, err.message);
     }
     try {
-      const res = await ctx.model.Category.create({
+      const res = await ctx.model.Category.upsert({
         uid: ctx.state.user.uid,
         content: ctx.request.body.categories,
       });

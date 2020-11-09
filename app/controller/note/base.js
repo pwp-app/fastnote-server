@@ -6,12 +6,18 @@ const BaseController = require('../base');
 
 const validateRules = {
   getList: {
-    page: { required: true, type: 'number', min: 1 },
-    pageSize: { required: true, type: 'number', min: 1 },
+    page: { required: true, type: 'int' },
+    pageSize: { required: true, type: 'int' },
+  },
+  getListByCat: {
+    page: { required: true, type: 'int' },
+    pageSize: { required: true, type: 'int' },
+    category: { required: true, type: 'string' },
   },
   save: {
-    noteId: { required: true, type: 'number', min: 1 },
+    noteId: { required: true },
     syncId: { required: true, type: 'string' },
+    category: { required: false, type: 'string' },
     content: { required: true, type: 'string' },
   },
   delete: {
@@ -19,12 +25,23 @@ const validateRules = {
   },
 };
 
+const toInt = function(source) {
+  if (typeof source === 'undefined' || source === null) {
+    return null;
+  }
+  return parseInt(source, 10);
+};
+
 class NoteController extends BaseController {
   async getList() {
     const { ctx } = this;
     try {
+      ctx.query.page = toInt(ctx.query.page);
+      ctx.query.pageSize = toInt(ctx.query.pageSize);
+      console.log(ctx.query);
       ctx.validate(validateRules.getList, ctx.query);
     } catch (err) {
+      console.log(err);
       return httpError(ctx, 'inputError', null, err.message);
     }
     // get notes by uid
@@ -44,6 +61,36 @@ class NoteController extends BaseController {
       return httpError(ctx, 'unknownError', err);
     }
   }
+  async getListByCat() {
+    const { ctx } = this;
+    try {
+      ctx.query.page = toInt(ctx.query.page);
+      ctx.query.pageSize = toInt(ctx.query.pageSize);
+      ctx.validate(validateRules.getListByCat, ctx.query);
+    } catch (err) {
+      return httpError(ctx, 'inputError', null, err.message);
+    }
+    const { category } = ctx.query;
+    const { page, pageSize } = ctx.query;
+    try {
+      const res = await ctx.model.Note.findAll({
+        where: {
+          uid: ctx.state.user.uid,
+          category: category === 'notalloc' ? null : category,
+        },
+        order: [[ 'noteId', 'DESC' ]],
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      });
+      if (!res) {
+        return httpError(ctx, 'unknownError');
+      }
+      return R.success(ctx, res);
+    } catch (err) {
+      console.error('Get notes by category error: ', err);
+      return httpError(ctx, 'unknownError', err);
+    }
+  }
   async save() {
     const { ctx } = this;
     try {
@@ -51,13 +98,14 @@ class NoteController extends BaseController {
     } catch (err) {
       return httpError(ctx, 'inputError', null, err.message);
     }
-    const { noteId, syncId, content } = ctx.request.body;
+    const { noteId, syncId, category, content } = ctx.request.body;
     try {
       const res = await ctx.model.Note.upsert({
         where: {
           uid: ctx.state.user.uid,
           noteId,
-          syncId: syncId || null,
+          syncId,
+          category: category || null,
           content,
         },
       });

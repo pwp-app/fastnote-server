@@ -10,11 +10,12 @@ class SyncService extends Service {
     // create notes to db
     const updateList = [];
     for (const note of notes) {
-      const { id, syncId, content } = note;
+      const { noteId, syncId, category, content } = note;
       updateList.push({
         uid,
         syncId: syncId ? syncId : uuid.v4(),
-        noteId: id,
+        noteId,
+        category,
         content,
       });
     }

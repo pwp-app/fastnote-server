@@ -36,6 +36,7 @@ const routes = {
     '/getInfo': {
       method: 'get',
       target: 'common.user.getInfo',
+      auth: true,
     },
   },
   '/sync': {

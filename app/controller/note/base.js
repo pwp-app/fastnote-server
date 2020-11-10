@@ -39,7 +39,6 @@ class NoteController extends BaseController {
     try {
       ctx.query.page = toInt(ctx.query.page);
       ctx.query.pageSize = toInt(ctx.query.pageSize);
-      console.log(ctx.query);
       ctx.validate(validateRules.getList, ctx.query);
     } catch (err) {
       console.log(err);

@@ -19,7 +19,9 @@ class SyncService extends Service {
         content,
       });
     }
-    return await ctx.model.Note.bulkCreate(updateList);
+    return await ctx.model.Note.bulkCreate(updateList, {
+      updateOnDuplicate: [ 'noteId', 'category', 'content', 'updatedAt' ],
+    });
   }
   async delete(uid, syncIds) {
     const { ctx, app } = this;
@@ -40,7 +42,7 @@ class SyncService extends Service {
       };
     });
     return await ctx.model.DeleteLog.bulkCreate(logs, {
-      updateOnDuplicate: [],
+      ignoreDuplicates: true,
     });
   }
 }

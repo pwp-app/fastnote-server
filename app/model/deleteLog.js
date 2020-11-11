@@ -4,11 +4,10 @@ module.exports = app => {
   const { INTEGER, STRING, DATE, Op } = app.Sequelize;
   const DeleteLog = app.model.define('delete_log', {
     uid: INTEGER,
-    logId: {
+    syncId: {
       type: STRING,
       unique: true,
     },
-    syncId: STRING,
     createdAt: DATE,
     updatedAt: DATE,
   });

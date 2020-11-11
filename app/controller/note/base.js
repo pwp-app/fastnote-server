@@ -127,19 +127,36 @@ class NoteController extends BaseController {
       return httpError(ctx, 'inputError', null, err.message);
     }
     const { syncId } = ctx.request.body;
+    const t = await ctx.Sequelize.transaction();
     try {
+      const uid = ctx.state.user.uid;
       const res = await ctx.model.Note.destory({
         where: {
-          uid: ctx.state.user.uid,
+          uid,
           syncId,
         },
+        transaction: t,
       });
       if (!res) {
+        await t.rollback();
         return httpError(ctx, 'deleteFailed');
       }
+      const record = {
+        uid,
+        syncId,
+      };
+      const recordRes = await ctx.model.DeleteLog.upsert(record, {
+        transaction: t,
+      });
+      if (!recordRes) {
+        await t.rollback();
+        return httpError(ctx, 'deleteFailed');
+      }
+      await t.commit();
       return R.success(ctx);
     } catch (err) {
       console.error('Delete note error: ', err);
+      await t.rollback();
       return httpError(ctx, 'unknownError', err);
     }
   }

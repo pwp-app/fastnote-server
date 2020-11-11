@@ -2,7 +2,6 @@
 
 const Service = require('egg').Service;
 const uuid = require('uuid');
-const { sha256 } = require('../utils/encrypt');
 
 class SyncService extends Service {
   async update(uid, notes) {
@@ -37,7 +36,6 @@ class SyncService extends Service {
     const logs = syncIds.map(item => {
       return {
         uid,
-        logId: sha256(`${uid}${item}`),
         syncId: item,
       };
     });

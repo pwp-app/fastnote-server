@@ -122,7 +122,6 @@ class NoteController extends BaseController {
   }
   async delete() {
     const { ctx } = this;
-    console.log(ctx.request.body);
     try {
       ctx.validate(validateRules.delete);
     } catch (err) {
@@ -130,10 +129,10 @@ class NoteController extends BaseController {
       return httpError(ctx, 'inputError', null, err.message);
     }
     const { syncId } = ctx.request.body;
-    const t = await ctx.Sequelize.transaction();
+    const t = await ctx.model.transaction();
     try {
       const uid = ctx.state.user.uid;
-      const res = await ctx.model.Note.destory({
+      const res = await ctx.model.Note.destroy({
         where: {
           uid,
           syncId,

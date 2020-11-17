@@ -22,7 +22,7 @@ const validateRules = {
     content: { required: true, type: 'string' },
   },
   delete: {
-    syncId: { required: true },
+    syncId: { required: true, type: 'string' },
   },
 };
 
@@ -100,11 +100,12 @@ class NoteController extends BaseController {
       return httpError(ctx, 'inputError', null, err.message);
     }
     const { noteId, syncId, category, content } = ctx.request.body;
+    const upsertSyncId = syncId || uuid.v4();
     try {
       const res = await ctx.model.Note.upsert({
         uid: ctx.state.user.uid,
         noteId,
-        syncId: syncId || uuid.v4(),
+        syncId: upsertSyncId,
         category: category || null,
         content,
       });
@@ -112,7 +113,7 @@ class NoteController extends BaseController {
         return httpError(ctx, 'saveFailed');
       }
       return R.success(ctx, {
-        syncId: res.syncId,
+        syncId: upsertSyncId,
       });
     } catch (err) {
       console.error('Save not error: ', err);
@@ -121,9 +122,11 @@ class NoteController extends BaseController {
   }
   async delete() {
     const { ctx } = this;
+    console.log(ctx.request.body);
     try {
       ctx.validate(validateRules.delete);
     } catch (err) {
+      console.error(err);
       return httpError(ctx, 'inputError', null, err.message);
     }
     const { syncId } = ctx.request.body;

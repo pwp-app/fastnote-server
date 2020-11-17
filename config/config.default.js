@@ -24,19 +24,19 @@ module.exports = () => {
         'Content-Type': 'application/json',
       });
       if (ctx.status === 422) {
-        ctx.body = JSON.stringify({
+        ctx.body = {
           code: 100000,
           success: false,
           message: '输入的内容有误',
-          err: process.env.NODE_ENV === 'dev' ? err : null,
-        });
+          err: process.env.NODE_ENV === 'dev' ? err.message : null,
+        };
       } else {
-        ctx.body = JSON.stringify({
+        ctx.body = {
           code: 500000,
           success: false,
           message: '发生了未知错误',
-          err: process.env.NODE_ENV === 'dev' ? err : null,
-        });
+          err: process.env.NODE_ENV === 'dev' ? err.message : null,
+        };
       }
       ctx.status = 200;
     },

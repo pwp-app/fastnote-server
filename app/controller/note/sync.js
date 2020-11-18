@@ -31,6 +31,10 @@ class SyncController extends BaseController {
       const deletedLogs = await ctx.model.DeleteLog.getCreatedSince(uid, lastSync);
       const categories = await ctx.model.Category.getChange(uid, lastSync);
       if (updatedNotes) {
+        // disable cache for diff data
+        ctx.set({
+          'Cache-Control': 'no-store',
+        });
         return R.success(ctx, {
           notes: updatedNotes,
           deleted: deletedLogs,

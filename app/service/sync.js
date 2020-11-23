@@ -25,7 +25,7 @@ class SyncService extends Service {
   async delete(uid, syncIds) {
     const { ctx, app } = this;
     const { Op } = app.Sequelize;
-    await ctx.model.Note.destory({
+    await ctx.model.Note.destroy({
       where: {
         uid,
         syncId: {

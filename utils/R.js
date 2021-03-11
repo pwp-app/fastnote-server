@@ -13,7 +13,7 @@ module.exports = {
     };
   },
   error: (ctx, message, err, code = -1) => {
-    ctx.status = 200;
+    ctx.status = 500;
     ctx.set({
       'Content-Type': 'application/json',
     });

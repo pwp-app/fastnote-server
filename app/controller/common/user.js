@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseController = require('../base');
+const { Controller } = require('egg');
 const R = require('../../../utils/R');
 const { httpError } = require('../../utils/httpError');
 const { passwordEncrypt } = require('../../utils/encrypt');
@@ -29,17 +29,13 @@ const validateRules = {
   },
 };
 
-class UserController extends BaseController {
+class UserController extends Controller {
   async login() {
     const { ctx, app, service } = this;
-    try {
-      ctx.validate(validateRules.login);
-    } catch (err) {
-      return httpError(ctx, 'inputError');
-    }
+    ctx.validate(validateRules.login);
     // check if user existed
     const { username } = ctx.request.body;
-    if (!await service.user.checkUsername(username)) {
+    if (!(await service.user.checkUsername(username))) {
       return httpError(ctx, 'userCredentialError');
     }
     // check if login need captcha
@@ -70,12 +66,16 @@ class UserController extends BaseController {
     const authToken = app.jwt.sign(payload, app.config.jwt.secret, {
       expiresIn: '3h',
     });
-    const refreshToken = app.jwt.sign({
-      ...payload,
-      refresh: true,
-    }, app.config.jwt.secret, {
-      expiresIn: '14d',
-    });
+    const refreshToken = app.jwt.sign(
+      {
+        ...payload,
+        refresh: true,
+      },
+      app.config.jwt.secret,
+      {
+        expiresIn: '14d',
+      }
+    );
     service.user.clearLoginFailed(username);
     await ctx.model.User.signIn(username);
     return R.success(ctx, {
@@ -85,11 +85,7 @@ class UserController extends BaseController {
   }
   async register() {
     const { ctx, service } = this;
-    try {
-      ctx.validate(validateRules.register);
-    } catch (err) {
-      return httpError(ctx, 'inputError');
-    }
+    ctx.validate(validateRules.register);
     // verify input
     const { username, password, confirmPassword } = ctx.request.body;
     if (password !== confirmPassword) {
@@ -108,24 +104,16 @@ class UserController extends BaseController {
       return httpError(ctx, ret.reason);
     }
     // add user to db
-    try {
-      await service.user.add({
-        username,
-        password: passwordEncrypt(password),
-        email,
-      });
-      return R.success(ctx);
-    } catch (err) {
-      return httpError(ctx, 'unknownError');
-    }
+    await service.user.add({
+      username,
+      password: passwordEncrypt(password),
+      email,
+    });
+    return R.success(ctx);
   }
   async sendMail() {
     const { ctx, app, service } = this;
-    try {
-      ctx.validate(validateRules.sendMail);
-    } catch (err) {
-      return httpError(ctx, 'inputError', null, err.message);
-    }
+    ctx.validate(validateRules.sendMail);
     // verify captcha
     const { captcha, captchaId } = ctx.request.body;
     const captchaRet = await app.captcha.verify(captchaId, captcha);
@@ -134,70 +122,57 @@ class UserController extends BaseController {
     }
     // send email
     const { email } = ctx.request.body;
-    try {
-      const ret = await service.user.sendVerifyMail(email);
-      if (!ret) {
-        return httpError(ctx, 'cannotSendMail');
-      }
-      return R.success(ctx);
-    } catch (err) {
-      return httpError(ctx, 'unknownError', err);
+    const ret = await service.user.sendVerifyMail(email);
+    if (!ret) {
+      return httpError(ctx, 'cannotSendMail');
     }
+    return R.success(ctx);
   }
   async refreshToken() {
     const { ctx, app } = this;
-    try {
-      ctx.validate(validateRules.refreshToken, ctx.query);
-    } catch (err) {
-      return httpError(ctx, 'inputError', null, err.message);
-    }
+    ctx.validate(validateRules.refreshToken, ctx.query);
     // decode token
     const { token } = ctx.query;
-    try {
-      const decoded = ctx.app.jwt.verify(token, app.config.jwt.secret);
-      if (!decoded.refresh) {
-        return httpError('tokenInvalid');
-      }
-      // verify user info
-      const res = ctx.model.User.checkRefresh(decoded);
-      if (!res) {
-        return httpError('tokenInvalid');
-      }
-      // return signed token
-      const payload = {
-        username: decoded.username,
-        uid: decoded.uid,
-      };
-      const authToken = app.jwt.sign(payload, app.config.jwt.secret, {
-        expiresIn: '3h',
-      });
-      const refreshToken = app.jwt.sign({
-        ...payload,
-        refresh: true,
-      }, app.config.jwt.secret, {
-        expiresIn: '14d',
-      });
-      await ctx.model.User.recordRefresh(decoded.uid);
-      return R.success(ctx, {
-        authToken,
-        refreshToken,
-      });
-    } catch (err) {
+    const decoded = ctx.app.jwt.verify(token, app.config.jwt.secret);
+    if (!decoded.refresh) {
       return httpError('tokenInvalid');
     }
+    // verify user info
+    const res = ctx.model.User.checkRefresh(decoded);
+    if (!res) {
+      return httpError('tokenInvalid');
+    }
+    // return signed token
+    const payload = {
+      username: decoded.username,
+      uid: decoded.uid,
+    };
+    const authToken = app.jwt.sign(payload, app.config.jwt.secret, {
+      expiresIn: '3h',
+    });
+    const refreshToken = app.jwt.sign(
+      {
+        ...payload,
+        refresh: true,
+      },
+      app.config.jwt.secret,
+      {
+        expiresIn: '14d',
+      }
+    );
+    await ctx.model.User.recordRefresh(decoded.uid);
+    return R.success(ctx, {
+      authToken,
+      refreshToken,
+    });
   }
   async getInfo() {
     const { ctx } = this;
-    try {
-      const res = await ctx.model.User.getInfo(ctx.state.user.uid);
-      if (!res) {
-        return httpError(ctx, 'unknownError');
-      }
-      return R.success(ctx, res);
-    } catch (err) {
-      console.error('Get user info error: ', err);
-      return httpError(ctx, 'unknownError', err);
+    const res = await ctx.model.User.getInfo(ctx.state.user.uid);
+    if (!res) {
+      return httpError(ctx, 'unknownError');
     }
+    return R.success(ctx, res);
   }
 }
 

@@ -2,7 +2,7 @@
 
 const R = require('../../../utils/R');
 const { httpError } = require('../../utils/httpError');
-const BaseController = require('../base');
+const { Controller } = require('egg');
 
 const validateRules = {
   diff: {
@@ -14,54 +14,34 @@ const validateRules = {
   },
 };
 
-class SyncController extends BaseController {
+class SyncController extends Controller {
   async diff() {
     const { ctx } = this;
-    try {
-      ctx.validate(validateRules.diff, ctx.query);
-    } catch (err) {
-      return httpError(ctx, 'inputError', null, err.message);
-    }
+    ctx.validate(validateRules.diff, ctx.query);
     // get uid
     const { uid } = ctx.state.user;
     // fetch updated notes
     const { lastSync } = ctx.query;
-    try {
-      const updatedNotes = await ctx.model.Note.getUpdatedSince(uid, lastSync);
-      const deletedLogs = await ctx.model.DeleteLog.getCreatedSince(uid, lastSync);
-      const categories = await ctx.model.Category.getChange(uid, lastSync);
-      if (updatedNotes) {
-        // disable cache for diff data
-        ctx.set({
-          'Cache-Control': 'no-store',
-        });
-        return R.success(ctx, {
-          notes: updatedNotes,
-          deleted: deletedLogs,
-          categories: categories ? categories.content : null,
-        });
-      }
-    } catch (err) {
-      console.log('Get recent update notes error: ', err);
-      return httpError(ctx, 'unknownError', err);
-    }
+    const updatedNotes = await ctx.model.Note.getUpdatedSince(uid, lastSync);
+    const deletedLogs = await ctx.model.DeleteLog.getCreatedSince(uid, lastSync);
+    const categories = await ctx.model.Category.getChange(uid, lastSync);
+    // disable cache for diff data
+    ctx.set({
+      'Cache-Control': 'no-store',
+    });
+    return R.success(ctx, {
+      notes: updatedNotes || [],
+      deleted: deletedLogs || [],
+      categories: categories ? categories.content : null,
+    });
   }
   async update() {
     const { ctx, service } = this;
-    try {
-      ctx.validate(validateRules.update);
-    } catch (err) {
-      return httpError(ctx, 'inputError', null, err.message);
-    }
+    ctx.validate(validateRules.update);
     // get uid
     const { uid } = ctx.state.user;
     // update notes in database
-    let notes;
-    try {
-      notes = JSON.parse(ctx.request.body.notes);
-    } catch (err) {
-      return httpError(ctx, 'requestParamError');
-    }
+    const notes = JSON.parse(ctx.request.body.notes);
     if (!notes || !Array.isArray(notes)) {
       return httpError(ctx, 'requestParamError');
     }
@@ -77,19 +57,10 @@ class SyncController extends BaseController {
     // do delete
     let deleted;
     if (ctx.request.body.deleted) {
-      try {
-        deleted = JSON.parse(ctx.request.body.deleted);
-      } catch (err) {
-        return httpError(ctx, 'requestParamError');
-      }
+      deleted = JSON.parse(ctx.request.body.deleted);
       if (deleted && Array.isArray(deleted) && deleted.length > 0) {
-        try {
-          const deleteRes = await service.sync.delete(uid, deleted);
-          if (!deleteRes) {
-            return httpError(ctx, 'updateDataFailed');
-          }
-        } catch (err) {
-          console.error('Delete notes error: ', err);
+        const deleteRes = await service.sync.delete(uid, deleted);
+        if (!deleteRes) {
           return httpError(ctx, 'updateDataFailed');
         }
       }

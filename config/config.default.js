@@ -19,26 +19,28 @@ module.exports = () => {
   config.middleware = [];
 
   config.onerror = {
-    all: (err, ctx) => {
-      ctx.set({
-        'Content-Type': 'application/json',
-      });
+    html: (err, ctx) => {
+      ctx.body = 'Error';
+      if (process.env.NODE_ENV === 'dev') {
+        ctx.body += `\n${err.message}\n${err.stack}`;
+      }
+    },
+    json: (err, ctx) => {
       if (ctx.status === 422) {
         ctx.body = {
           code: 100000,
           success: false,
           message: '输入的内容有误',
-          err: process.env.NODE_ENV === 'dev' ? err.message : null,
+          err: process.env.NODE_ENV === 'dev' ? err : null,
         };
       } else {
         ctx.body = {
           code: 500000,
           success: false,
           message: '发生了未知错误',
-          err: process.env.NODE_ENV === 'dev' ? err.message : null,
+          err: process.env.NODE_ENV === 'dev' ? err : null,
         };
       }
-      ctx.status = 200;
     },
   };
 

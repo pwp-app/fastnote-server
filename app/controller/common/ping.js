@@ -1,9 +1,9 @@
 'use strict';
 
 const R = require('../../../utils/R');
-const BaseController = require('../base');
+const { Controller } = require('egg');
 
-class PingController extends BaseController {
+class PingController extends Controller {
   async ping() {
     return R.success(this.ctx);
   }

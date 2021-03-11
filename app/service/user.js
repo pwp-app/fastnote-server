@@ -62,13 +62,13 @@ class UserService extends Service {
     if (await app.redis.exists(controlKey)) {
       return false;
     }
-    await app.redis.set(controlKey, '', 'ex', sec('PT1M'));
-    await app.redis.set(codeKey, code, 'ex', sec('PT30M'));
     await app.mailer.send({
       ...getMailOptions('validation'),
       to: email,
       html: template,
     });
+    await app.redis.set(controlKey, '', 'ex', sec('PT1M'));
+    await app.redis.set(codeKey, code, 'ex', sec('PT30M'));
     return true;
   }
   async verifyMail(email, code) {

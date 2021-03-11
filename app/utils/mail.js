@@ -2,7 +2,7 @@
 
 const mailOptions = {
   validation: {
-    from: '"Fastnote" <noreply@pwp.app>',
+    from: 'noreply@pwp.app',
     subject: 'Fastnote 邮箱验证',
   },
 };

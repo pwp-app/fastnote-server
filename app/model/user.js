@@ -81,7 +81,5 @@ module.exports = app => {
     });
   };
 
-  User.sync({ alter: true });
-
   return User;
 };

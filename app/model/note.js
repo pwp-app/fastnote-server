@@ -33,7 +33,5 @@ module.exports = app => {
     });
   };
 
-  Note.sync({ alter: true });
-
   return Note;
 };

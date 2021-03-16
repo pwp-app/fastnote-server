@@ -23,7 +23,5 @@ module.exports = app => {
     });
   };
 
-  Category.sync({ alter: true });
-
   return Category;
 };

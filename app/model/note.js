@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  const { INTEGER, STRING, TEXT, DATE, Op } = app.Sequelize;
+  const { INTEGER, STRING, BOOLEAN, TEXT, DATE, Op } = app.Sequelize;
   const Note = app.model.define('note', {
     uid: INTEGER,
     noteId: INTEGER,
@@ -12,6 +12,10 @@ module.exports = app => {
     category: {
       type: STRING,
       defaultValue: null,
+    },
+    forceTop: {
+      type: BOOLEAN,
+      defaultValue: false,
     },
     content: TEXT('long'),
     createdAt: DATE,
@@ -28,6 +32,8 @@ module.exports = app => {
       },
     });
   };
+
+  Note.sync({ alter: true });
 
   return Note;
 };

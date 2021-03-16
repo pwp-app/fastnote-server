@@ -63,7 +63,10 @@ class NoteController extends Controller {
         uid: ctx.state.user.uid,
         category: category === 'notalloc' ? null : category,
       },
-      order: [[ 'noteId', 'DESC' ]],
+      order: [
+        [ 'forceTop', 'DESC' ],
+        [ 'noteId', 'DESC' ],
+      ],
       limit: pageSize,
       offset: (page - 1) * pageSize,
     });

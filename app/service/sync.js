@@ -9,13 +9,14 @@ class SyncService extends Service {
     // create notes to db
     const updateList = [];
     for (const note of notes) {
-      const { noteId, syncId, category, content } = note;
+      const { noteId, syncId, category, content, forceTop } = note;
       updateList.push({
         uid,
         syncId: syncId ? syncId : uuid.v4(),
         noteId,
         category,
         content,
+        forceTop: !!forceTop,
       });
     }
     return await ctx.model.Note.bulkCreate(updateList, {

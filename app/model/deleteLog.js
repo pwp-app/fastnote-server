@@ -23,5 +23,7 @@ module.exports = app => {
     });
   };
 
+  DeleteLog.sync({ alter: true });
+
   return DeleteLog;
 };

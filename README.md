@@ -1,4 +1,4 @@
-# fastnote-server
+# Fastnote Server
 
 Backend server of Fastnote.
 
@@ -12,6 +12,8 @@ npm run dev
 ```
 
 ## Deploy
+
+Put the project to your server, after installed dependencies, run:
 
 ```bash
 npm start

@@ -2,6 +2,9 @@
 
 /** @type Egg.EggPlugin */
 module.exports = {
+  static: {
+    enable: false,
+  },
   jwt: {
     enable: true,
     package: 'egg-jwt',

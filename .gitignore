@@ -14,5 +14,6 @@ typings/
 .nyc_output/
 .history/
 .vscode/
-config/config.private.js
+config/config.local.js
+config/config.prod.js
 .github

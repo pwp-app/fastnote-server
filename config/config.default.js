@@ -3,7 +3,6 @@
 'use strict';
 
 const path = require('path');
-const privateConfig = require('./config.private');
 
 module.exports = () => {
   /**
@@ -11,9 +10,6 @@ module.exports = () => {
    * @type {Egg.EggAppConfig}
    **/
   const config = {};
-
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = privateConfig.cookie;
 
   // add your middleware config here
   config.middleware = [];
@@ -46,21 +42,20 @@ module.exports = () => {
 
   config.sequelize = {
     dialect: 'mysql',
-    ...privateConfig.mysql,
+    dialectOptions: {
+      charset: 'utf8mb4',
+    },
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci',
+      paranoid: false,
+      underscored: true,
+      freezeTableName: true,
+    },
   };
-
-  config.redis = {
-    client: privateConfig.redis,
-  };
-
-  config.mailer = privateConfig.mailer;
 
   config.mailTemplate = {
     path: path.resolve(__dirname, '../resources/email'),
-  };
-
-  config.jwt = {
-    secret: privateConfig.jwt,
   };
 
   config.security = {
